@@ -2,9 +2,9 @@ import { useState } from "react";
 import "./App.css";
 
 function App() {
-  const [display, setDisplay] = useState("0"); 
-  const [firstOperand, setFirstOperand] = useState(null); 
-  const [operator, setOperator] = useState(null); 
+  const [display, setDisplay] = useState("0");
+  const [firstOperand, setFirstOperand] = useState(null);
+  const [operator, setOperator] = useState(null);
   const [waitingForSecondOperand, setWaitingForSecondOperand] = useState(false);
 
   const handleNumberClick = (number) => {
@@ -12,13 +12,13 @@ function App() {
       setDisplay(number);
       setWaitingForSecondOperand(false);
     } else {
-      setDisplay(display === "0" ? number : display + number); 
+      setDisplay(display === "0" ? number : display + number);
     }
   };
 
   const handleOperatorClick = (op) => {
     if (operator && waitingForSecondOperand) {
-      setOperator(op); 
+      setOperator(op);
       return;
     }
 
@@ -76,9 +76,21 @@ function App() {
     }
   };
 
+  const handleDelete = () => {
+    setDisplay((prevDisplay) =>
+      prevDisplay.length > 1 ? prevDisplay.slice(0, -1) : "0"
+    );
+  };
+
   return (
     <div className="calculator">
-      <div className="display">{display}</div>
+      <div className="display-wrapper">
+  <div className="display">{display}</div>
+  <button className="delete" onClick={handleDelete}>
+    ⌫
+  </button>
+</div>
+
 
       <div className="buttons">
         <button className="clear" onClick={handleClear}>
