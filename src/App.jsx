@@ -2,44 +2,75 @@ import React, { useState } from "react";
 import "./App.css";
 
 function App() {
-  const [input, setInput] = useState(""); // State to manage calculator input
+  const [input, setInput] = useState("0");
 
-  // Function to handle button clicks
   const handleButtonClick = (value) => {
     if (value === "C") {
-      setInput(""); // Clear input
+      setInput("0");
+    } else if (value === "+/-") {
+      setInput((prev) => (parseFloat(prev) * -1).toString());
+    } else if (value === "%") {
+      setInput((prev) => (parseFloat(prev) / 100).toString());
     } else if (value === "=") {
       try {
-        setInput(eval(input).toString()); // Evaluate input and update state
+        setInput(eval(input).toString());
       } catch {
-        setInput("Error"); // Handle invalid inputs
+        setInput("Error");
       }
     } else {
-      setInput((prev) => prev + value); // Concatenate input
+      setInput((prev) => (prev === "0" ? value : prev + value));
     }
   };
 
   return (
     <div className="calculator">
-      <div className="display">{input || "0"}</div> {/* Display input */}
+      <div className="display">{input}</div>
       <div className="buttons">
-        {/* Digit Buttons */}
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((digit) => (
-          <button key={digit} onClick={() => handleButtonClick(digit.toString())}>
-            {digit}
-          </button>
-        ))}
-        {/* Operator Buttons */}
-        {["+", "-", "*", "/"].map((operator) => (
+        {["C", "()", "%", "/"].map((op) => (
           <button
-            key={operator}
-            onClick={() => handleButtonClick(operator)}
+            key={op}
+            className="operator"
+            onClick={() => handleButtonClick(op)}
           >
-            {operator}
+            {op}
           </button>
         ))}
-        <button onClick={() => handleButtonClick("=")}>=</button>
-        <button onClick={() => handleButtonClick("C")}>C</button>
+        {["7", "8", "9", "*"].map((value) => (
+          <button
+            key={value}
+            className="number"
+            onClick={() => handleButtonClick(value)}
+          >
+            {value}
+          </button>
+        ))}
+        {["4", "5", "6", "-"].map((value) => (
+          <button
+            key={value}
+            className="number"
+            onClick={() => handleButtonClick(value)}
+          >
+            {value}
+          </button>
+        ))}
+        {["1", "2", "3", "+"].map((value) => (
+          <button
+            key={value}
+            className="number"
+            onClick={() => handleButtonClick(value)}
+          >
+            {value}
+          </button>
+        ))}
+        {["+/-", "0", ",", "="].map((value) => (
+          <button
+            key={value}
+            className={value === "=" ? "operator equals" : "number"}
+            onClick={() => handleButtonClick(value)}
+          >
+            {value}
+          </button>
+        ))}
       </div>
     </div>
   );
