@@ -1,35 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [input, setInput] = useState(""); // State to manage calculator input
+
+  // Function to handle button clicks
+  const handleButtonClick = (value) => {
+    if (value === "C") {
+      setInput(""); // Clear input
+    } else if (value === "=") {
+      try {
+        setInput(eval(input).toString()); // Evaluate input and update state
+      } catch {
+        setInput("Error"); // Handle invalid inputs
+      }
+    } else {
+      setInput((prev) => prev + value); // Concatenate input
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="calculator">
+      <div className="display">{input || "0"}</div> {/* Display input */}
+      <div className="buttons">
+        {/* Digit Buttons */}
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((digit) => (
+          <button key={digit} onClick={() => handleButtonClick(digit.toString())}>
+            {digit}
+          </button>
+        ))}
+        {/* Operator Buttons */}
+        {["+", "-", "*", "/"].map((operator) => (
+          <button
+            key={operator}
+            onClick={() => handleButtonClick(operator)}
+          >
+            {operator}
+          </button>
+        ))}
+        <button onClick={() => handleButtonClick("=")}>=</button>
+        <button onClick={() => handleButtonClick("C")}>C</button>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
