@@ -63,7 +63,7 @@ button.number:hover {
 
 button.operator {
   background: #333;
-  color: #00ff00; 
+  color: #00a000; 
 }
 
 button.operator:hover {
@@ -72,12 +72,12 @@ button.operator:hover {
 
 
 button.clear {
-  background: #800020; 
-  color: white;
+  color: red;
+  background-color: #333;
 }
 
 button.clear:hover {
-  background: #a0002a; 
+  background: #444; 
 }
 
 button.default {
@@ -91,7 +91,7 @@ button.default:hover {
 
 button.percent {
   background: #333; 
-  color: #00ff00; 
+  color: #00a000; 
 }
 
 button.percent:hover {
@@ -99,12 +99,12 @@ button.percent:hover {
 }
 
 button.equals {
-  background: #00ff00; 
+  background: #00a000; 
   color: white;
 }
 
 button.equals:hover {
-  background: #00cc00; 
+  background: #00a000; 
 }
 
 button:active {
