@@ -3,7 +3,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100px;
   margin: 0;
   background: #000;
 }
@@ -19,14 +19,42 @@ body {
   color: #fff;
 }
 
+.display-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #222;
+  border-radius: 5px;
+  padding: 5px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
 .display {
   flex: 1;
   background: transparent;
   color: #fff;
-  font-size: 38px; 
+  font-size: 46px;
   border: none;
   text-align: right;
   padding: 10px;
+}
+
+.toggle-mode {
+  position: absolute;
+  left: 0px;
+  top: 10px;
+  margin-top: 32px;
+  font-size: 14px;
+  background: transparent;
+  box-shadow: none;
+  outline: none !important;
+}
+
+.scientific-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
 }
 
 .buttons {
@@ -37,69 +65,29 @@ body {
 }
 
 button {
-  font-size: 24px; 
+  font-size: 24px;
   border: none;
   border-radius: 50%;
   padding: 15px;
-  cursor: pointer;
-  text-align: center;
   height: 70px;
   width: 70px;
   transition: all 0.3s ease-in-out;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
-button.number {
+button:hover {
   background: #333;
-  color: white;
 }
 
-button.number:hover {
-  background: #444;
-}
-
-button.operator {
-  background: #333;
+button.operator, button.percent, button.brackets {
   color: #00a000;
-}
-
-button.operator:hover {
-  background: #444;
 }
 
 button.clear {
   color: red;
-  background-color: #333;
-}
-
-button.clear:hover {
-  background: #444;
-}
-
-button.default {
-  background: #333;
-  color: white;
-}
-
-button.default:hover {
-  background: #444;
-}
-
-button.percent {
-  background: #333;
-  color: #00a000;
-}
-
-button.percent:hover {
-  background: #444;
 }
 
 button.equals {
-  background: #00a000;
-  color: white;
-}
-
-button.equals:hover {
   background: #00a000;
 }
 
@@ -107,31 +95,17 @@ button:active {
   transform: scale(0.95);
 }
 
-.display-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #222;
-  border-radius: 5px;
-  padding: 5px;
-  margin-bottom: 10px;
-}
-
-.display:focus {
-  outline: none;
-}
-
 .delete {
   background: transparent;
   color: white;
   border: none;
-  font-size: 24px;
+  font-size: 22px;
   padding: 0;
   margin: 0;
   box-shadow: none;
   outline: none !important;
 }
 
-button.delete:hover {
+button.delete:hover, button.toggle-mode:hover {
   background: none;
 }

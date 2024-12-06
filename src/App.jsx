@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+import { evaluate, parse } from "mathjs"; 
 
 function App() {
   const [expression, setExpression] = useState("");
+  const [isScientificMode, setIsScientificMode] = useState(false);
 
   const handleNumberClick = (number) => {
     setExpression((prev) => prev + number);
@@ -18,9 +20,9 @@ function App() {
 
   const calculate = (expr) => {
     try {
-      const result = eval(expr);
+      const result = evaluate(expr);
       return result.toString();
-    } catch {
+    } catch (error) {
       return "Error";
     }
   };
@@ -83,6 +85,26 @@ function App() {
     }
   };
 
+  const handleSquareRoot = () => {
+    if (expression) {
+      setExpression((prev) => prev + "sqrt(");
+    }
+  };
+
+  const handlePercentage = () => {
+    if (expression) {
+      const result = parseFloat(expression) / 100;
+      setExpression(result.toString());
+    }
+  };
+
+  const handleTrigonometricFunction = (func) => {
+    if (expression) {
+      const result = calculate(func + "(" + expression + ")");
+      setExpression(result.toString());
+    }
+  };
+
   const handleKeyDown = (event) => {
     const { key } = event;
 
@@ -108,25 +130,53 @@ function App() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [expression]);
+  }, [expression, isScientificMode]);
+
+  const toggleScientificMode = () => {
+    setIsScientificMode((prev) => !prev);
+  };
 
   return (
     <div className="calculator">
       <div className="display-wrapper">
-        <div className="display">{expression || "0"}</div>
+        <div className="display">
+          <button className="toggle-mode" onClick={toggleScientificMode}>
+            {isScientificMode ? "Basic" : "Scientific"}
+          </button>
+          <div>{expression || "0"}</div>
+        </div>
         <button className="delete" onClick={handleDelete}>
           ⌫
         </button>
       </div>
 
+      {isScientificMode && (
+        <div className="scientific-buttons">
+          <button className="scientific" onClick={handleSquareRoot}>
+            √
+          </button>
+          <button className="scientific" onClick={() => handleTrigonometricFunction("tan")}>
+            tan
+          </button>
+          <button className="scientific" onClick={() => handleTrigonometricFunction("sin")}>
+            sin
+          </button>
+          <button className="scientific" onClick={() => handleTrigonometricFunction("cos")}>
+            cos
+          </button>
+        </div>
+      )}
+
       <div className="buttons">
         <button className="clear" onClick={handleClear}>
           C
         </button>
-        <button className="default" onClick={handleBrackets}>
+        <button className="brackets" onClick={handleBrackets}>
           ( )
         </button>
-        <button className="percent">%</button>
+        <button className="percent" onClick={handlePercentage}>
+          %
+        </button>
         <button className="operator" onClick={() => handleOperatorClick("/")}>
           /
         </button>
@@ -171,7 +221,7 @@ function App() {
         </button>
 
         <button className="default" onClick={handlePlusMinus}>
-          +/-
+          +/- 
         </button>
         <button className="number" onClick={() => handleNumberClick("0")}>
           0
