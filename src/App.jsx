@@ -1,102 +1,131 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
-  const [display, setDisplay] = useState("0");
-  const [firstOperand, setFirstOperand] = useState(null);
-  const [operator, setOperator] = useState(null);
-  const [waitingForSecondOperand, setWaitingForSecondOperand] = useState(false);
+  const [expression, setExpression] = useState("");
 
   const handleNumberClick = (number) => {
-    if (waitingForSecondOperand) {
-      setDisplay(number);
-      setWaitingForSecondOperand(false);
-    } else {
-      setDisplay(display === "0" ? number : display + number);
-    }
+    setExpression((prev) => prev + number);
   };
 
   const handleOperatorClick = (op) => {
-    if (operator && waitingForSecondOperand) {
-      setOperator(op);
-      return;
+    if (/[\+\-\*\/]$/.test(expression)) {
+      setExpression((prev) => prev.slice(0, -1) + op);
+    } else {
+      setExpression((prev) => prev + op);
     }
-
-    if (firstOperand === null) {
-      setFirstOperand(parseFloat(display));
-    } else if (operator) {
-      const result = calculate(firstOperand, parseFloat(display), operator);
-      setDisplay(String(result));
-      setFirstOperand(result);
-    }
-
-    setOperator(op);
-    setWaitingForSecondOperand(true);
   };
 
-  const calculate = (a, b, op) => {
-    switch (op) {
-      case "+":
-        return a + b;
-      case "-":
-        return a - b;
-      case "*":
-        return a * b;
-      case "/":
-        return b !== 0 ? a / b : "Error";
-      default:
-        return b;
+  const calculate = (expr) => {
+    try {
+      const result = eval(expr);
+      return result.toString();
+    } catch {
+      return "Error";
     }
   };
 
   const handleEqualsClick = () => {
-    if (operator && !waitingForSecondOperand) {
-      const result = calculate(firstOperand, parseFloat(display), operator);
-      setDisplay(String(result));
-      setFirstOperand(null);
-      setOperator(null);
-      setWaitingForSecondOperand(false);
+    if (expression && !/[\+\-\*\/]$/.test(expression)) {
+      const result = calculate(expression);
+      setExpression(result);
+    } else {
+      setExpression("Error");
     }
   };
 
   const handleClear = () => {
-    setDisplay("0");
-    setFirstOperand(null);
-    setOperator(null);
-    setWaitingForSecondOperand(false);
-  };
-
-  const handlePlusMinus = () => {
-    setDisplay((prev) => (prev.startsWith("-") ? prev.slice(1) : "-" + prev));
+    setExpression("");
   };
 
   const handleDecimal = () => {
-    if (!display.includes(".")) {
-      setDisplay(display + ".");
+    const lastNumber = expression.split(/[\+\-\*\/]/).pop();
+    if (!lastNumber.includes(".")) {
+      setExpression((prev) => prev + ".");
     }
   };
 
   const handleDelete = () => {
-    setDisplay((prevDisplay) =>
-      prevDisplay.length > 1 ? prevDisplay.slice(0, -1) : "0"
+    setExpression((prev) =>
+      prev.length > 1 ? prev.slice(0, -1) : ""
     );
   };
+
+  const handleBrackets = () => {
+    const openCount = (expression.match(/\(/g) || []).length;
+    const closeCount = (expression.match(/\)/g) || []).length;
+
+    if (openCount === closeCount || /[\+\-\*\/\(]$/.test(expression)) {
+      setExpression((prev) => prev + "(");
+    } else {
+      setExpression((prev) => prev + ")");
+    }
+  };
+
+  const handlePlusMinus = () => {
+    if (expression) {
+      const lastNumberIndex = Math.max(
+        expression.lastIndexOf("+"),
+        expression.lastIndexOf("-"),
+        expression.lastIndexOf("*"),
+        expression.lastIndexOf("/")
+      );
+      const lastNumber = expression.slice(lastNumberIndex + 1);
+      if (!lastNumber.startsWith("-")) {
+        setExpression(
+          expression.slice(0, lastNumberIndex + 1) + "-" + lastNumber
+        );
+      } else {
+        setExpression(
+          expression.slice(0, lastNumberIndex + 1) + lastNumber.slice(1)
+        );
+      }
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    const { key } = event;
+
+    if (!isNaN(key)) {
+      handleNumberClick(key);
+    } else if (["+", "-", "*", "/"].includes(key)) {
+      handleOperatorClick(key);
+    } else if (key === "Enter" || key === "=") {
+      handleEqualsClick();
+    } else if (key === "Backspace") {
+      handleDelete();
+    } else if (key === "Escape") {
+      handleClear();
+    } else if (key === ".") {
+      handleDecimal();
+    } else if (key === "(" || key === ")") {
+      handleBrackets();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [expression]);
 
   return (
     <div className="calculator">
       <div className="display-wrapper">
-  <div className="display">{display}</div>
-  <button className="delete" onClick={handleDelete}>
-    ⌫
-  </button>
-</div>
-
+        <div className="display">{expression || "0"}</div>
+        <button className="delete" onClick={handleDelete}>
+          ⌫
+        </button>
+      </div>
 
       <div className="buttons">
         <button className="clear" onClick={handleClear}>
           C
         </button>
-        <button className="default">( )</button>
+        <button className="default" onClick={handleBrackets}>
+          ( )
+        </button>
         <button className="percent">%</button>
         <button className="operator" onClick={() => handleOperatorClick("/")}>
           /
@@ -148,7 +177,7 @@ function App() {
           0
         </button>
         <button className="number" onClick={handleDecimal}>
-          ,
+          .
         </button>
         <button className="equals" onClick={handleEqualsClick}>
           =
