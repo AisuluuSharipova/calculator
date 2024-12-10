@@ -20,12 +20,31 @@ function App() {
 
   const calculate = (expr) => {
     try {
-      const result = evaluate(expr);
+      const trigRegex = /(tan|sin|cos)\d+/gi; 
+      const modifiedExpr = expr.replace(trigRegex, (match) => {
+        const func = match.slice(0, 3).toLowerCase(); 
+        const num = parseFloat(match.slice(3));
+        const radians = (num * Math.PI) / 180; 
+        switch (func) {
+          case "tan":
+            return Math.tan(radians);
+          case "sin":
+            return Math.sin(radians);
+          case "cos":
+            return Math.cos(radians);
+          default:
+            return 0;
+        }
+      });
+
+      const result = evaluate(modifiedExpr);
       return result.toString();
     } catch (error) {
+      console.error(error);
       return "Error";
     }
   };
+
 
   const handleEqualsClick = () => {
     if (expression && !/[\+\-\*\/]$/.test(expression)) {
@@ -86,11 +105,13 @@ function App() {
   };
 
   const handleSquareRoot = () => {
-    if (expression) {
-      setExpression((prev) => prev + "sqrt(");
+    if (expression && !/[\+\-\*\/]$/.test(expression)) {
+      setExpression((prev) => prev + "√");
+    } else {
+      setExpression((prev) => prev + "√");
     }
   };
-
+  
   const handlePercentage = () => {
     if (expression) {
       const result = parseFloat(expression) / 100;
@@ -100,11 +121,31 @@ function App() {
 
   const handleTrigonometricFunction = (func) => {
     if (expression) {
-      const result = calculate(func + "(" + expression + ")");
-      setExpression(result.toString());
+      try {
+        const radians = parseFloat(expression) * (Math.PI / 180); 
+        let result;
+  
+        switch (func) {
+          case "sin":
+            result = Math.sin(radians);
+            break;
+          case "cos":
+            result = Math.cos(radians);
+            break;
+          case "tan":
+            result = Math.tan(radians);
+            break;
+          default:
+            result = 0;
+        }
+  
+        setExpression(result.toString());
+      } catch (error) {
+        setExpression("Error");
+      }
     }
   };
-
+  
   const handleKeyDown = (event) => {
     const { key } = event;
 
@@ -152,19 +193,19 @@ function App() {
 
       {isScientificMode && (
         <div className="scientific-buttons">
-          <button className="scientific" onClick={handleSquareRoot}>
-            √
-          </button>
-          <button className="scientific" onClick={() => handleTrigonometricFunction("tan")}>
-            tan
-          </button>
-          <button className="scientific" onClick={() => handleTrigonometricFunction("sin")}>
-            sin
-          </button>
-          <button className="scientific" onClick={() => handleTrigonometricFunction("cos")}>
-            cos
-          </button>
-        </div>
+        <button className="scientific" onClick={handleSquareRoot}>
+          √
+        </button>
+        <button className="scientific" onClick={() => handleTrigonometricFunction("tan")}>
+          tan
+        </button>
+        <button className="scientific" onClick={() => handleTrigonometricFunction("sin")}>
+          sin
+        </button>
+        <button className="scientific" onClick={() => handleTrigonometricFunction("cos")}>
+          cos
+        </button>
+      </div>      
       )}
 
       <div className="buttons">
