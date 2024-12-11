@@ -1,13 +1,13 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  base: '/calculator/',  
+  base: '/calculator/', 
   plugins: [react()],
   build: {
     rollupOptions: {
-      external: ['mathjs']
-    }
-  }
+      external: ['mathjs'], 
+    },
+  },
 });
 
