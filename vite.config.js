@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  base: '/calculator/',
+  base: '/calculator/',  
   plugins: [react()],
   build: {
     rollupOptions: {
@@ -10,3 +10,4 @@ export default defineConfig({
     }
   }
 });
+
