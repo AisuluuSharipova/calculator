@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
-import { evaluate, parse } from "mathjs"; 
+import { evaluate, parse } from "mathjs";
 
 function App() {
   const [expression, setExpression] = useState("");
@@ -20,9 +20,25 @@ function App() {
 
   const calculate = (expr) => {
     try {
-      // Handle square root calculation
-      const modifiedExpr = expr.replace(/√([0-9]+)/g, (match, number) => {
-        return Math.sqrt(parseFloat(number));
+      if (expr.includes("/0") || /\/\s*0/.test(expr)) {
+        return "Cannot divide by zero";
+      }
+
+      const trigRegex = /(tan|sin|cos)\d+/gi;
+      const modifiedExpr = expr.replace(trigRegex, (match) => {
+        const func = match.slice(0, 3).toLowerCase();
+        const num = parseFloat(match.slice(3));
+        const radians = (num * Math.PI) / 180;
+        switch (func) {
+          case "tan":
+            return Math.tan(radians);
+          case "sin":
+            return Math.sin(radians);
+          case "cos":
+            return Math.cos(radians);
+          default:
+            return 0;
+        }
       });
 
       const result = evaluate(modifiedExpr);
@@ -93,10 +109,10 @@ function App() {
 
   const handleSquareRoot = () => {
     if (expression && !/[\+\-\*\/]$/.test(expression)) {
-      const result = calculate("√" + expression);  // Adding the square root operation
+      const result = calculate("sqrt(" + expression + ")");
       setExpression(result);
     }
-  };
+  };  
 
   const handlePercentage = () => {
     if (expression) {
@@ -131,7 +147,7 @@ function App() {
       }
     }
   };
-  
+
   const handleKeyDown = (event) => {
     const { key } = event;
 
