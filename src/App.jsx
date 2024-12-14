@@ -20,21 +20,9 @@ function App() {
 
   const calculate = (expr) => {
     try {
-      const trigRegex = /(tan|sin|cos)\d+/gi; 
-      const modifiedExpr = expr.replace(trigRegex, (match) => {
-        const func = match.slice(0, 3).toLowerCase(); 
-        const num = parseFloat(match.slice(3));
-        const radians = (num * Math.PI) / 180; 
-        switch (func) {
-          case "tan":
-            return Math.tan(radians);
-          case "sin":
-            return Math.sin(radians);
-          case "cos":
-            return Math.cos(radians);
-          default:
-            return 0;
-        }
+      // Handle square root calculation
+      const modifiedExpr = expr.replace(/√([0-9]+)/g, (match, number) => {
+        return Math.sqrt(parseFloat(number));
       });
 
       const result = evaluate(modifiedExpr);
@@ -44,7 +32,6 @@ function App() {
       return "Error";
     }
   };
-
 
   const handleEqualsClick = () => {
     if (expression && !/[\+\-\*\/]$/.test(expression)) {
@@ -106,12 +93,11 @@ function App() {
 
   const handleSquareRoot = () => {
     if (expression && !/[\+\-\*\/]$/.test(expression)) {
-      setExpression((prev) => prev + "√");
-    } else {
-      setExpression((prev) => prev + "√");
+      const result = calculate("√" + expression);  // Adding the square root operation
+      setExpression(result);
     }
   };
-  
+
   const handlePercentage = () => {
     if (expression) {
       const result = parseFloat(expression) / 100;
@@ -193,19 +179,19 @@ function App() {
 
       {isScientificMode && (
         <div className="scientific-buttons">
-        <button className="scientific" onClick={handleSquareRoot}>
-          √
-        </button>
-        <button className="scientific" onClick={() => handleTrigonometricFunction("tan")}>
-          tan
-        </button>
-        <button className="scientific" onClick={() => handleTrigonometricFunction("sin")}>
-          sin
-        </button>
-        <button className="scientific" onClick={() => handleTrigonometricFunction("cos")}>
-          cos
-        </button>
-      </div>      
+          <button className="scientific" onClick={handleSquareRoot}>
+            √
+          </button>
+          <button className="scientific" onClick={() => handleTrigonometricFunction("tan")}>
+            tan
+          </button>
+          <button className="scientific" onClick={() => handleTrigonometricFunction("sin")}>
+            sin
+          </button>
+          <button className="scientific" onClick={() => handleTrigonometricFunction("cos")}>
+            cos
+          </button>
+        </div>      
       )}
 
       <div className="buttons">
